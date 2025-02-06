@@ -18,7 +18,7 @@
 #include "ft_printf/ft_printf.h"
 #include "ft_printf/Libft/libft.h"
 
-static volatile	sig_atomic_t ack = 0;
+static volatile sig_atomic_t	g_ack = 0;
 
 static void	send_bits(unsigned long val, int bits, int pid)
 {
@@ -33,13 +33,13 @@ static void	send_bits(unsigned long val, int bits, int pid)
 				exit(1);
 		}
 		else
-		{ 
+		{
 			if (kill(pid, SIGUSR1) == -1)
 				exit(1);
 		}
-		while (ack == 0)
+		while (g_ack == 0)
 			;
-		ack = 0;
+		g_ack = 0;
 	}
 }
 
@@ -53,7 +53,7 @@ static void	send_str(char *str, int pid)
 void	ack_handler(int signum)
 {
 	if (signum == SIGUSR1)
-		ack = 1;
+		g_ack = 1;
 	else if (signum == SIGUSR2)
 		ft_printf("Message Recieved!\n");
 }
@@ -64,8 +64,7 @@ static int	valid_pid(char *s)
 
 	if (!s)
 	{
-		errno = EINVAL;
-		perror("No PID!");
+		ft_printf("No PID!\n");
 		exit(1);
 	}
 	i = -1;
@@ -93,6 +92,7 @@ int	main(int argc, char **argv)
 	struct sigaction	sa;
 	int					i;
 
+	i = 0;
 	i = valid_pid(argv[1]);
 	if (argc != 3 || !i)
 	{

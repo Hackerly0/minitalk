@@ -48,31 +48,31 @@ char	*ft_realloc(char *ptr, size_t new_size)
 	return (str);
 }
 
-
 char	*string_join(char *c, char *str)
 {
-    static	size_t str_len = 0;
-    static	size_t str_capacity = 0;
-    char	*new_str;
+	static size_t	str_len = 0;
+	static size_t	str_capacity = 0;
+	char			*new_str;
 
-    if (!str)
-    {
-		if (!(str = malloc(2)))
+	if (!str)
+	{
+		str = malloc(2);
+		if (!str)
 			return (NULL);
-        str_len = 0;
-        str_capacity = 2;
-    }
-    if (str_len + 2 > str_capacity)
-    {
-        str_capacity *= 2;
-        if (!(new_str = ft_realloc(str, str_capacity)))
+		str_len = 0;
+		str_capacity = 2;
+	}
+	if (str_len + 2 > str_capacity)
+	{
+		str_capacity *= 2;
+		new_str = ft_realloc(str, str_capacity);
+		if (!new_str)
 			return (NULL);
-        str = new_str;
-    }
-    str[str_len++] = *c;
-    str[str_len] = '\0';
-
-    return (str);
+		str = new_str;
+	}
+	str[str_len++] = *c;
+	str[str_len] = '\0';
+	return (str);
 }
 
 void	printing_and_freeing(char *c, int *j, char **str, pid_t pid)
