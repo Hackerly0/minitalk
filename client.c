@@ -62,11 +62,18 @@ static int	valid_pid(char *s)
 {
 	int	i;
 
+	if (!s)
+	{
+		errno = EINVAL;
+		perror("No PID!");
+		exit(1);
+	}
 	i = -1;
 	while (s[++i])
 	{
 		if (!ft_isdigit(s[i]))
 		{
+			errno = EINVAL;
 			perror("Invalid PID!");
 			exit(1);
 		}
@@ -74,6 +81,7 @@ static int	valid_pid(char *s)
 	i = ft_atoi(s);
 	if (i <= 0 || (kill(i, 0)) != 0)
 	{
+		errno = EINVAL;
 		perror("Invalid PID!");
 		exit(1);
 	}
