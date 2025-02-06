@@ -17,24 +17,62 @@
 #include <stdio.h>
 #include "ft_printf/ft_printf.h"
 #include "ft_printf/Libft/libft.h"
+#include <stdlib.h>
 
-static char	*string_join(char *c, char *str)
+char	*ft_realloc(char *ptr, size_t new_size)
 {
-	char	*temp;
+	char	*str;
+	size_t	old_size;
 
-	if (str == NULL)
-		str = ft_strdup("");
-	temp = ft_strjoin(str, c);
-	if (!temp)
+	if (!ptr)
 	{
-		if (str)
-			free (str);
-		perror("Joining Failed");
-		exit (1);
+		if (new_size == 0)
+			return (NULL);
+		return (malloc(new_size));
 	}
-	if (str)
-		free (str);
-	return (temp);
+	old_size = ft_strlen(ptr);
+	if (new_size == 0)
+	{
+		free(ptr);
+		return (NULL);
+	}
+	if (new_size == old_size)
+		return (ptr);
+	str = malloc(new_size);
+	if (!str)
+		return (NULL);
+	if (old_size > new_size)
+		old_size = new_size;
+	ft_memcpy(str, ptr, old_size);
+	free(ptr);
+	return (str);
+}
+
+
+char	*string_join(char *c, char *str)
+{
+    static	size_t str_len = 0;
+    static	size_t str_capacity = 0;
+    char	*new_str;
+
+    if (!str)
+    {
+		if (!(str = malloc(2)))
+			return (NULL);
+        str_len = 0;
+        str_capacity = 2;
+    }
+    if (str_len + 2 > str_capacity)
+    {
+        str_capacity *= 2;
+        if (!(new_str = ft_realloc(str, str_capacity)))
+			return (NULL);
+        str = new_str;
+    }
+    str[str_len++] = *c;
+    str[str_len] = '\0';
+
+    return (str);
 }
 
 void	printing_and_freeing(char *c, int *j, char **str, pid_t pid)
