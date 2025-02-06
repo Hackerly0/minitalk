@@ -62,10 +62,10 @@ void	printing_and_freeing(char *c, int *j, char **str, pid_t pid)
 
 void	handler_sigaction(int signum, siginfo_t *info, void *context)
 {
-	static char		c;
-	static int		counter;
-	static pid_t	client_pid;
-	static char		*str;
+	static char		c = 0;
+	static int		counter = 0;
+	static pid_t	client_pid = 0;
+	static char		*str = NULL;
 	pid_t			pid2;
 
 	(void)context;
@@ -81,8 +81,9 @@ void	handler_sigaction(int signum, siginfo_t *info, void *context)
 		counter = 0;
 	}
 	if (signum == SIGUSR2)
-		c = c | (1 << counter);
-	if (counter == 7)
+		c |= (1 << counter);
+	counter++;
+	if (counter == 8)
 		printing_and_freeing(&c, &counter, &str, client_pid);
 	if ((kill(pid2, SIGUSR1)) == -1)
 		printing_and_freeing(0, &counter, &str, client_pid);

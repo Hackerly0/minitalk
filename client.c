@@ -27,7 +27,7 @@ static void	send_bits(unsigned long val, int bits, int pid)
 	i = -1;
 	while (++i < bits)
 	{
-		if ((val>>i & 1)==1)
+		if ((val >> i & 1) == 1)
 		{
 			if (kill(pid, SIGUSR2) == -1)
 				exit(1);
@@ -55,7 +55,7 @@ void	ack_handler(int signum)
 	if (signum == SIGUSR1)
 		ack = 1;
 	else if (signum == SIGUSR2)
-		ft_printf("Message Recieved!");
+		ft_printf("Message Recieved!\n");
 }
 
 static int	valid_pid(char *s)
@@ -83,14 +83,20 @@ static int	valid_pid(char *s)
 int	main(int argc, char **argv)
 {
 	struct sigaction	sa;
+	int					i;
 
-	if (argc != 3 || !valid_pid(argv[1]))
-		return (1);
+	i = valid_pid(argv[1]);
+	if (argc != 3 || !i)
+	{
+		errno = EINVAL;
+		perror("Invalid number of arguments!");
+		exit(1);
+	}
 	sa.sa_handler = ack_handler;
 	sa.sa_flags = SA_RESTART;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
-	send_str(argv[2], ft_atoi(argv[1]));
+	send_str(argv[2], i);
 	return (0);
 }
