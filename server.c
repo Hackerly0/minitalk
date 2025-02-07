@@ -10,45 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <stdio.h>
-#include "ft_printf/ft_printf.h"
-#include "ft_printf/Libft/libft.h"
-#include <stdlib.h>
+#include "utils.h"
 
-char	*ft_realloc(char *ptr, size_t new_size)
+void	free_exit(char *str, pid_t pid, int i)
 {
-	char	*str;
-	size_t	old_size;
-
-	if (!ptr)
-	{
-		if (new_size == 0)
-			return (NULL);
-		return (malloc(new_size));
-	}
-	old_size = ft_strlen(ptr);
-	if (new_size == 0)
-	{
-		free(ptr);
-		return (NULL);
-	}
-	if (new_size == old_size)
-		return (ptr);
-	str = malloc(new_size);
-	if (!str)
-		return (NULL);
-	if (old_size > new_size)
-		old_size = new_size;
-	ft_memcpy(str, ptr, old_size);
-	free(ptr);
-	return (str);
+	kill(pid, SIGUSR2);
+	if (i)
+		free(str);
+	exit(1);
 }
 
-char	*string_join(char *c, char *str)
+char	*string_join(char *c, char *str, pid_t pid)
 {
 	static size_t	str_len = 0;
 	static size_t	str_capacity = 0;
@@ -58,7 +30,7 @@ char	*string_join(char *c, char *str)
 	{
 		str = malloc(2);
 		if (!str)
-			return (NULL);
+			free_exit(str, pid, 0);
 		str_len = 0;
 		str_capacity = 2;
 	}
@@ -67,7 +39,7 @@ char	*string_join(char *c, char *str)
 		str_capacity *= 2;
 		new_str = ft_realloc(str, str_capacity);
 		if (!new_str)
-			return (NULL);
+			free_exit(str, pid, 1);
 		str = new_str;
 	}
 	str[str_len++] = *c;
@@ -92,7 +64,7 @@ void	printing_and_freeing(char *c, int *j, char **str, pid_t pid)
 	}
 	else
 	{
-		*str = string_join(c, *str);
+		*str = string_join(c, *str, pid);
 		*j = 0;
 		*c = 0;
 	}

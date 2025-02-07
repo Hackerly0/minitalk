@@ -10,13 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <errno.h>
-#include <stdio.h>
-#include "ft_printf/ft_printf.h"
-#include "ft_printf/Libft/libft.h"
+#include "utils.h"
 
 static volatile sig_atomic_t	g_ack = 0;
 
@@ -55,7 +49,10 @@ void	ack_handler(int signum)
 	if (signum == SIGUSR1)
 		g_ack = 1;
 	else if (signum == SIGUSR2)
+	{
 		ft_printf("Message Recieved!\n");
+		exit(0);
+	}
 }
 
 static int	valid_pid(char *s)
