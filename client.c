@@ -69,16 +69,14 @@ static int	valid_pid(char *s)
 	{
 		if (!ft_isdigit(s[i]))
 		{
-			errno = EINVAL;
-			perror("Invalid PID!");
+			ft_printf("Invalid PID!");
 			exit(1);
 		}
 	}
 	i = ft_atoi(s);
 	if (i <= 0 || (kill(i, 0)) != 0)
 	{
-		errno = EINVAL;
-		perror("Invalid PID!");
+		ft_printf("Invalid PID!");
 		exit(1);
 	}
 	return (i);
@@ -93,8 +91,7 @@ int	main(int argc, char **argv)
 	i = valid_pid(argv[1]);
 	if (argc != 3 || !i)
 	{
-		errno = EINVAL;
-		perror("Invalid number of arguments!");
+		ft_printf("Invalid number of arguments!");
 		exit(1);
 	}
 	sa.sa_handler = ack_handler;
